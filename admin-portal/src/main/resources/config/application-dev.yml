@@ -22,7 +22,7 @@ spring:
         driver-class-name: org.h2.jdbcx.JdbcDataSource
         url: jdbc:h2:file:./target/h2db/db/foo;DB_CLOSE_DELAY=-1
         name:
-        username: 
+        username:
         password:
     jpa:
         database-platform: com.mycompany.myapp.domain.util.FixedH2Dialect
@@ -44,7 +44,7 @@ liquibase:
     contexts: dev
 
 server:
-    port: 8080
+    port: 8084
 
 # ===================================================================
 # JHipster specific properties

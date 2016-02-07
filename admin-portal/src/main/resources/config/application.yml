@@ -10,6 +10,7 @@
 # Full reference is available at:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
+spring.application.name: admin-portal
 
 spring:
     jpa:
@@ -28,6 +29,15 @@ spring:
 security:
     basic:
         enabled: false
+
+zuul:
+  routes:
+    resource:
+      path: /api/foos/**
+      url: http://localhost:8083/api/foos
+    # user:
+    #   path: /user/**
+    #   url: http://localhost:9999/uaa/user
 
 # ===================================================================
 # JHipster specific properties

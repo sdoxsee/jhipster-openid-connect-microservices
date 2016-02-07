@@ -20,6 +20,7 @@
 *.pydevproject
 .project
 .metadata
+.factorypath
 /bin/**
 /tmp/**
 /tmp/**/*
@@ -126,4 +127,3 @@ Desktop.ini
 # Maven Wrapper
 ######################
 !.mvn/wrapper/maven-wrapper.jar
-

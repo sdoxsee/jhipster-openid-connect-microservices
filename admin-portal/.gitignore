@@ -20,6 +20,7 @@
 *.pydevproject
 .project
 .metadata
+.factorypath
 /bin/**
 /tmp/**
 /tmp/**/*

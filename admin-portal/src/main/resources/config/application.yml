@@ -34,7 +34,9 @@ zuul:
   routes:
     resource:
       path: /api/foos/**
-      url: http://localhost:8083/api/foos
+      # url: http://localhost:8083/api/foos
+      service-id: foo-service
+      strip-prefix: false
     # user:
     #   path: /user/**
     #   url: http://localhost:9999/uaa/user

@@ -1,7 +1,7 @@
 package com.mycompany.myapp.domain;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+// import org.hibernate.annotations.Cache;
+// import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "foo")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+// @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Foo implements Serializable {
 
     @Id
@@ -21,7 +21,7 @@ public class Foo implements Serializable {
 
     @Column(name = "aaa")
     private String aaa;
-    
+
     public Long getId() {
         return id;
     }
@@ -33,7 +33,7 @@ public class Foo implements Serializable {
     public String getAaa() {
         return aaa;
     }
-    
+
     public void setAaa(String aaa) {
         this.aaa = aaa;
     }

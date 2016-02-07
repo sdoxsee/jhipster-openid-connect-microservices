@@ -1,0 +1,13 @@
+spring.application.name: foo-service
+
+server.port: 8083
+
+security:
+  basic:
+    enabled: false
+    
+spring.oauth2:
+  resource:
+    jwt.keyUri: http://localhost:8080/token_key
+
+spring.jpa.hibernate.ddl-auto: update

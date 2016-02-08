@@ -12,8 +12,10 @@ angular.module('fooApp')
                     var to = $rootScope.toState;
                     var params = $rootScope.toStateParams;
                     Auth.logout();
-                    $rootScope.previousStateName = to;
-                    $rootScope.previousStateNameParams = params;
+                    localStorageService.set('previousStateName', to);
+                    localStorageService.set('previousStateParams', params);
+                    // $rootScope.previousStateName = to;
+                    // $rootScope.previousStateNameParams = params;
                     $state.go('login');
                 } else if (response.status == 403 && response.config.method != 'GET' && getCSRF() == '') {
                     // If the CSRF token expired, then try to get a new CSRF token and retry the old request

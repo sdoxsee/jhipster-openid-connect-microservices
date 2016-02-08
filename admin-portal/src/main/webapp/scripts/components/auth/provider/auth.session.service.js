@@ -17,12 +17,17 @@ angular.module('fooApp')
             },
             logout: function() {
                 // logout from the server
-                $http.post('api/logout').success(function (response) {
+                $http.post('/logout').success(function (response) {
                     localStorageService.clearAll();
                     // to get a new csrf token call the api
                     $http.get('api/account');
                     return response;
-                });
+                }).error(function(data) {
+                    localStorageService.clearAll();
+                    // to get a new csrf token call the api
+                    $http.get('api/account');
+                    return data;
+                });;
             },
             getToken: function () {
                 var token = localStorageService.get('token');

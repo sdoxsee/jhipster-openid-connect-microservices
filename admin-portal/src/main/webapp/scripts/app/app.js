@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprecht.translate', 
+angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprecht.translate',
     'ngResource', 'ngCookies', 'ngAria', 'ngCacheBuster', 'ngFileUpload',
     // jhipster-needle-angularjs-add-module JHipster will add new module
     'ui.bootstrap', 'ui.router',  'infinite-scroll', 'angular-loading-bar'])
 
-    .run(function ($rootScope, $location, $window, $http, $state, $translate, Language, Auth, Principal, ENV, VERSION) {
+    .run(function ($rootScope, $location, $window, $http, $state, $translate, Language, Auth, Principal, localStorageService, ENV, VERSION) {
         // update the window title using params in the following
         // precendence
         // 1. titleKey parameter
@@ -19,22 +19,37 @@ angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprec
                 $window.document.title = title;
             });
         };
-        
+
         $rootScope.ENV = ENV;
         $rootScope.VERSION = VERSION;
-        $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams) {
+        $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromParams) {
             $rootScope.toState = toState;
             $rootScope.toStateParams = toStateParams;
+
+            // catch the case where we've just loaded the angular app but there is
+            // a previousStateName in localStorage that we should go to.
+            if (!fromState.name && localStorageService.get('previousStateName')) {
+              event.preventDefault();
+              var previousState = localStorageService.get('previousStateName');
+              localStorageService.set('previousStateName', undefined);
+              localStorageService.set('previousStateParams', undefined);
+              $state.go(previousState);
+            }
+
+            if (toState.external) {
+              event.preventDefault();
+              $window.open(toState.url, '_self');
+            }
 
             if (Principal.isIdentityResolved()) {
                 Auth.authorize();
             }
-            
+
             // Update the language
             Language.getCurrent().then(function (language) {
                 $translate.use(language);
             });
-            
+
         });
 
         $rootScope.$on('$stateChangeSuccess',  function(event, toState, toParams, fromState, fromParams) {
@@ -44,10 +59,10 @@ angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprec
             // reset the state memory after logout. If we're redirected to login, our
             // previousState is already set in the authExpiredInterceptor. If we're going
             // to login directly, we don't want to be sent to some previous state anyway
-            if (toState.name != 'login' && $rootScope.previousStateName) {
-              $rootScope.previousStateName = fromState.name;
-              $rootScope.previousStateParams = fromParams;
-            }
+            // if (toState.name != 'login' && $rootScope.previousStateName) {
+            //   $rootScope.previousStateName = fromState.name;
+            //   $rootScope.previousStateParams = fromParams;
+            // }
 
             // Set the page title key to the one configured in state or use default one
             if (toState.data.pageTitle) {
@@ -55,17 +70,19 @@ angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprec
             }
             updateTitle(titleKey);
         });
-        
+
         // if the current translation changes, update the window title
         $rootScope.$on('$translateChangeSuccess', function() { updateTitle(); });
 
-        
+
         $rootScope.back = function() {
             // If previous state is 'activate' or do not exist go to 'home'
-            if ($rootScope.previousStateName === 'activate' || $state.get($rootScope.previousStateName) === null) {
+            var previousStateName = localStorageService.get('previousStateName');
+            var previousStateParams = localStorageService.get('previousStateParams');
+            if (previousStateName === 'activate' || $state.get(previousStateName) === null) {
                 $state.go('home');
             } else {
-                $state.go($rootScope.previousStateName, $rootScope.previousStateParams);
+                $state.go(previousStateName, previousStateParams);
             }
         };
     })
@@ -74,8 +91,8 @@ angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprec
         //AlertServiceProvider.showAsToast(true);
 
         //enable CSRF
-        $httpProvider.defaults.xsrfCookieName = 'CSRF-TOKEN';
-        $httpProvider.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
+        // $httpProvider.defaults.xsrfCookieName = 'CSRF-TOKEN';
+        // $httpProvider.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
 
         //Cache everything except rest api requests
         httpRequestInterceptorCacheBusterProvider.setMatchlist([/.*api.*/, /.*protected.*/], true);
@@ -104,7 +121,7 @@ angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprec
         $httpProvider.interceptors.push('errorHandlerInterceptor');
         $httpProvider.interceptors.push('authExpiredInterceptor');
         $httpProvider.interceptors.push('notificationInterceptor');
-        
+
         // Initialize angular-translate
         $translateProvider.useLoader('$translatePartialLoader', {
             urlTemplate: 'i18n/{lang}/{part}.json'
@@ -118,7 +135,7 @@ angular.module('fooApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprec
         tmhDynamicLocaleProvider.localeLocationPattern('bower_components/angular-i18n/angular-locale_{{locale}}.js');
         tmhDynamicLocaleProvider.useCookieStorage();
         tmhDynamicLocaleProvider.storageKey('NG_TRANSLATE_LANG_KEY');
-        
+
     })
     // jhipster-needle-angularjs-add-config JHipster will add new application configuration
     .config(['$urlMatcherFactoryProvider', function($urlMatcherFactory) {

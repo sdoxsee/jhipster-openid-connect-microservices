@@ -1,7 +1,16 @@
 package com.mycompany.myapp.config;
 
-import com.mycompany.myapp.security.*;
-import com.mycompany.myapp.web.filter.CsrfCookieGeneratorFilter;
+import java.io.IOException;
+
+import javax.inject.Inject;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -12,17 +21,25 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
-
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
-import javax.inject.Inject;
+import com.mycompany.myapp.security.AjaxAuthenticationFailureHandler;
+import com.mycompany.myapp.security.AjaxAuthenticationSuccessHandler;
+import com.mycompany.myapp.security.AjaxLogoutSuccessHandler;
+import com.mycompany.myapp.security.Http401UnauthorizedEntryPoint;
 
 @Configuration
 @EnableWebSecurity
+@EnableOAuth2Sso
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -71,68 +88,106 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/console/**");
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .csrf()
-        .and()
-            .addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
-            .exceptionHandling()
-            .accessDeniedHandler(new CustomAccessDeniedHandler())
-            .authenticationEntryPoint(authenticationEntryPoint)
-        .and()
-            .rememberMe()
-            .rememberMeServices(rememberMeServices)
-            .rememberMeParameter("remember-me")
-            .key(env.getProperty("jhipster.security.rememberme.key"))
-        .and()
-            .formLogin()
-            .loginProcessingUrl("/api/authentication")
-            .successHandler(ajaxAuthenticationSuccessHandler)
-            .failureHandler(ajaxAuthenticationFailureHandler)
-            .usernameParameter("j_username")
-            .passwordParameter("j_password")
-            .permitAll()
-        .and()
-            .logout()
-            .logoutUrl("/api/logout")
-            .logoutSuccessHandler(ajaxLogoutSuccessHandler)
-            .deleteCookies("JSESSIONID", "CSRF-TOKEN")
-            .permitAll()
-        .and()
-            .headers()
-            .frameOptions()
-            .disable()
-        .and()
-            .authorizeRequests()
-            .antMatchers("/api/register").permitAll()
-            .antMatchers("/api/activate").permitAll()
-            .antMatchers("/api/authenticate").permitAll()
-            .antMatchers("/api/account/reset_password/init").permitAll()
-            .antMatchers("/api/account/reset_password/finish").permitAll()
-            .antMatchers("/api/logs/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/api/audits/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/api/**").authenticated()
-            .antMatchers("/metrics/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/health/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/trace/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/dump/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/shutdown/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/beans/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/configprops/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/info/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/autoconfig/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/env/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/trace/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/mappings/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/liquibase/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/v2/api-docs/**").permitAll()
-            .antMatchers("/configuration/security").permitAll()
-            .antMatchers("/configuration/ui").permitAll()
-            .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/protected/**").authenticated() ;
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http
+//            .csrf()
+//        .and()
+//            .addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
+//            .exceptionHandling()
+//            .accessDeniedHandler(new CustomAccessDeniedHandler())
+//            .authenticationEntryPoint(authenticationEntryPoint)
+//        .and()
+//            .rememberMe()
+//            .rememberMeServices(rememberMeServices)
+//            .rememberMeParameter("remember-me")
+//            .key(env.getProperty("jhipster.security.rememberme.key"))
+//        .and()
+//            .formLogin()
+//            .loginProcessingUrl("/api/authentication")
+//            .successHandler(ajaxAuthenticationSuccessHandler)
+//            .failureHandler(ajaxAuthenticationFailureHandler)
+//            .usernameParameter("j_username")
+//            .passwordParameter("j_password")
+//            .permitAll()
+//        .and()
+//            .logout()
+//            .logoutUrl("/api/logout")
+//            .logoutSuccessHandler(ajaxLogoutSuccessHandler)
+//            .deleteCookies("JSESSIONID", "CSRF-TOKEN")
+//            .permitAll()
+//        .and()
+//            .headers()
+//            .frameOptions()
+//            .disable()
+//        .and()
+//            .authorizeRequests()
+//            .antMatchers("/api/register").permitAll()
+//            .antMatchers("/api/activate").permitAll()
+//            .antMatchers("/api/authenticate").permitAll()
+//            .antMatchers("/api/account/reset_password/init").permitAll()
+//            .antMatchers("/api/account/reset_password/finish").permitAll()
+//            .antMatchers("/api/logs/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/api/audits/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/api/**").authenticated()
+//            .antMatchers("/metrics/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/health/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/trace/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/dump/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/shutdown/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/beans/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/configprops/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/info/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/autoconfig/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/env/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/trace/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/mappings/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/liquibase/**").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/v2/api-docs/**").permitAll()
+//            .antMatchers("/configuration/security").permitAll()
+//            .antMatchers("/configuration/ui").permitAll()
+//            .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN)
+//            .antMatchers("/protected/**").authenticated() ;
+//
+//    }
+    
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		http.antMatcher("/**").authorizeRequests()
+				.antMatchers("/index.html", "/home.html", "/", "/login").permitAll()
+				.anyRequest().authenticated().and().csrf()
+				.csrfTokenRepository(csrfTokenRepository()).and()
+				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+	}
 
-    }
+	private Filter csrfHeaderFilter() {
+		return new OncePerRequestFilter() {
+			@Override
+			protected void doFilterInternal(HttpServletRequest request,
+					HttpServletResponse response, FilterChain filterChain)
+							throws ServletException, IOException {
+				CsrfToken csrf = (CsrfToken) request
+						.getAttribute(CsrfToken.class.getName());
+				if (csrf != null) {
+					Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
+					String token = csrf.getToken();
+					if (cookie == null
+							|| token != null && !token.equals(cookie.getValue())) {
+						cookie = new Cookie("XSRF-TOKEN", token);
+						cookie.setPath("/");
+						response.addCookie(cookie);
+					}
+				}
+				filterChain.doFilter(request, response);
+			}
+		};
+	}
+
+	private CsrfTokenRepository csrfTokenRepository() {
+		HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+		repository.setHeaderName("X-XSRF-TOKEN");
+		return repository;
+	} 
 
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {

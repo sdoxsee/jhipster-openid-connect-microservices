@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('fooApp')
-    .factory('Auth', function Auth($rootScope, $state, $q, $translate, Principal, AuthServerProvider, Account, Register, Activate, Password, PasswordResetInit, PasswordResetFinish) {
+    .factory('Auth', function Auth($rootScope, $state, $q, $translate, Principal, AuthServerProvider, Account, Register, Activate, Password, PasswordResetInit, PasswordResetFinish, localStorageService) {
         return {
             login: function (credentials, callback) {
                 var cb = callback || angular.noop;
@@ -31,8 +31,10 @@ angular.module('fooApp')
                 AuthServerProvider.logout();
                 Principal.authenticate(null);
                 // Reset state memory
-                $rootScope.previousStateName = undefined;
-                $rootScope.previousStateNameParams = undefined;
+                localStorageService.set('previousStateName', undefined);
+                localStorageService.set('previousStateParams', undefined);
+                // $rootScope.previousStateName = undefined;
+                // $rootScope.previousStateNameParams = undefined;
             },
 
             authorize: function(force) {
@@ -53,8 +55,10 @@ angular.module('fooApp')
                             else {
                                 // user is not authenticated. stow the state they wanted before you
                                 // send them to the signin state, so you can return them when you're done
-                                $rootScope.previousStateName = $rootScope.toState;
-                                $rootScope.previousStateNameParams = $rootScope.toStateParams;
+                                localStorageService.set('previousStateName', $rootScope.toState.name);
+                                localStorageService.set('previousStateParams', $rootScope.toStateParams);
+                                // $rootScope.previousStateName = $rootScope.toState;
+                                // $rootScope.previousStateNameParams = $rootScope.toStateParams;
 
                                 // now, send them to the signin state so they can log in
                                 $state.go('login');

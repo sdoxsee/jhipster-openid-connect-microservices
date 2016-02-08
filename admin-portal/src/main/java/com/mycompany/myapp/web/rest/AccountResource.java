@@ -1,7 +1,35 @@
 package com.mycompany.myapp.web.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.codahale.metrics.annotation.Timed;
-import com.mycompany.myapp.domain.Authority;
 import com.mycompany.myapp.domain.PersistentToken;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.PersistentTokenRepository;
@@ -12,21 +40,6 @@ import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.web.rest.dto.KeyAndPasswordDTO;
 import com.mycompany.myapp.web.rest.dto.UserDTO;
 import com.mycompany.myapp.web.rest.util.HeaderUtil;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.*;
 
 /**
  * REST controller for managing the current user's account.
@@ -110,11 +123,23 @@ public class AccountResource {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<UserDTO> getAccount() {
-        return Optional.ofNullable(userService.getUserWithAuthorities())
-            .map(user -> new ResponseEntity<>(new UserDTO(user), HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
-    }
+//    public ResponseEntity<UserDTO> getAccount() {
+//        return Optional.ofNullable(userService.getUserWithAuthorities())
+//            .map(user -> new ResponseEntity<>(new UserDTO(user), HttpStatus.OK))
+//            .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+//    }
+    @ResponseBody
+	public UserDTO user(Principal principal) {
+    	Collection<GrantedAuthority> authorities = ((OAuth2Authentication)principal).getAuthorities();
+    	Set<String> auths = new HashSet<String>();
+    	for (GrantedAuthority grantedAuthority : authorities) {
+    		auths.add(grantedAuthority.getAuthority());
+    	}
+    	UserDTO user = new UserDTO(((OAuth2Authentication)principal).getName(), null, null, null, null, true, "en", auths);
+//		user.setLogin(((OAuth2Authentication)principal).getName());
+//		user.setLangKey("en"); // hardcoded for now
+		return user;
+	}
 
     /**
      * POST  /account -> update the current user information.

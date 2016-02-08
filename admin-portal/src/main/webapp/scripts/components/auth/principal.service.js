@@ -58,8 +58,13 @@ angular.module('fooApp')
                 // retrieve the identity data from the server, update the identity object, and then resolve.
                 Account.get().$promise
                     .then(function (account) {
-                        _identity = account.data;
-                        _authenticated = true;
+                        if (account.data.login) {
+                            _identity = account.data;
+                            _authenticated = true;
+                        } else {
+                            _identity = null;
+                            _authenticated = false;
+                        }
                         deferred.resolve(_identity);
                     })
                     .catch(function() {

@@ -5,9 +5,10 @@ angular.module('fooApp')
         $stateProvider
             .state('login', {
                 parent: 'account',
-                url: '/login',
+                url: 'http://localhost:8084/login',
+                external: true,
                 data: {
-                    authorities: [], 
+                    authorities: [],
                     pageTitle: 'login.title'
                 },
                 views: {

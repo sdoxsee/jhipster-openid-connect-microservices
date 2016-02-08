@@ -13,6 +13,8 @@
 spring.application.name: admin-portal
 
 spring:
+    aop:
+      proxy-target-class: true
     jpa:
         open-in-view: false
         hibernate:
@@ -30,16 +32,30 @@ security:
     basic:
         enabled: false
 
+targets.uaa: http://localhost:8080/uaa
+
+security.oauth2:
+  client:
+    accessTokenUri: ${targets.uaa}/oauth/token
+    userAuthorizationUri: ${targets.uaa}/oauth/authorize
+    clientId: admin-portal
+    clientSecret: secret
+    # scope: openid,menu.read,menu.write,order.admin
+    scope: openid,foo.read,foo.write,foo.admin
+  resource:
+    user-info-uri: ${targets.uaa}/userinfo
+    jwt.keyUri: ${targets.uaa}/token_key
+
+
 zuul:
   routes:
     resource:
       path: /api/foos/**
-      # url: http://localhost:8083/api/foos
       service-id: foo-service
       strip-prefix: false
-    # user:
-    #   path: /user/**
-    #   url: http://localhost:9999/uaa/user
+    user:
+      path: /api/user/**
+      url: http://localhost:8080/uaa/userinfo
 
 # ===================================================================
 # JHipster specific properties

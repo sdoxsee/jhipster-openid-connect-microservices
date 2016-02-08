@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>parent</artifactId>
+	<parent>
+		<artifactId>parent</artifactId>
 		<groupId>com.mycompany.myapp</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
 	<artifactId>foo-service</artifactId>
-	<groupId>com.mycompany.myapp</groupId>
-	<version>0.0.1-SNAPSHOT</version>
 
-  <dependencies>
-    <!-- <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-oauth2</artifactId>
-    </dependency> -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-rest</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
+	<dependencies>
 		<dependency>
-				<groupId>io.dropwizard.metrics</groupId>
-				<artifactId>metrics-annotation</artifactId>
-				<version>${dropwizard-metrics.version}</version>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-oauth2</artifactId>
 		</dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-annotation</artifactId>
+			<version>${dropwizard-metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-config-client</artifactId>
@@ -48,44 +46,44 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
-		        <dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-hibernate4</artifactId>
-		            <version>${jackson.version}</version>
-		        </dependency>
-		        <dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-hppc</artifactId>
-		            <version>${jackson.version}</version>
-		        </dependency>
-		        <dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-json-org</artifactId>
-		            <version>${jackson.version}</version>
-		        </dependency>
-		        <dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-jsr310</artifactId>
-		        </dependency>
-						<dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-hibernate4</artifactId>
-		            <version>${jackson.version}</version>
-		        </dependency>
-		        <dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-hppc</artifactId>
-		            <version>${jackson.version}</version>
-		        </dependency>
-		        <dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-json-org</artifactId>
-		            <version>${jackson.version}</version>
-		        </dependency>
-		        <dependency>
-		            <groupId>com.fasterxml.jackson.datatype</groupId>
-		            <artifactId>jackson-datatype-jsr310</artifactId>
-		        </dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate4</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hppc</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-json-org</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hibernate4</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-hppc</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-json-org</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
 
 
 		<dependency>
@@ -93,20 +91,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>3.1.0</version>
-				<scope>test</scope>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.1.0</version>
+			<scope>test</scope>
 		</dependency>
 
-    <!-- <dependency>
-      <groupId>io.pivotal.spring.cloud</groupId>
-      <artifactId>spring-cloud-services-starter-config-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.pivotal.spring.cloud</groupId>
-      <artifactId>spring-cloud-services-starter-service-registry</artifactId>
-    </dependency> -->
-  </dependencies>
+		<!-- <dependency> <groupId>io.pivotal.spring.cloud</groupId> <artifactId>spring-cloud-services-starter-config-client</artifactId> 
+			</dependency> <dependency> <groupId>io.pivotal.spring.cloud</groupId> <artifactId>spring-cloud-services-starter-service-registry</artifactId> 
+			</dependency> -->
+	</dependencies>
 
 </project>

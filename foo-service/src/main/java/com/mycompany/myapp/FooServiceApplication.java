@@ -44,12 +44,12 @@ public class FooServiceApplication {
     
              @Override
              public void configure(HttpSecurity http) throws Exception {
-                 if (securityProperties.isRequireSsl()) {
-                     http.requiresChannel().anyRequest().requiresSecure();
-                 }
+//                 if (securityProperties.isRequireSsl()) {
+//                     http.requiresChannel().anyRequest().requiresSecure();
+//                 }
                  http
                          .authorizeRequests()
-                         .antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasScope('foo.read')")
+                         .antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasAnyScope('foo.admin')")
                          .antMatchers(HttpMethod.POST, "/**").access("#oauth2.hasScope('foo.write')")
                          .antMatchers(HttpMethod.PUT, "/**").access("#oauth2.hasScope('foo.write')")
                          .antMatchers(HttpMethod.DELETE, "/**").access("#oauth2.hasScope('foo.write')");

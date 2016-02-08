@@ -132,9 +132,10 @@ public class AccountResource {
 	public UserDTO user(Principal principal) {
     	Collection<GrantedAuthority> authorities = ((OAuth2Authentication)principal).getAuthorities();
     	Set<String> auths = new HashSet<String>();
-    	for (GrantedAuthority grantedAuthority : authorities) {
-    		auths.add(grantedAuthority.getAuthority());
-    	}
+//    	for (GrantedAuthority grantedAuthority : authorities) {
+//    		auths.add(grantedAuthority.getAuthority());
+//    	}
+    	auths.addAll(((OAuth2Authentication)principal).getOAuth2Request().getScope());
     	UserDTO user = new UserDTO(((OAuth2Authentication)principal).getName(), null, null, null, null, true, "en", auths);
 //		user.setLogin(((OAuth2Authentication)principal).getName());
 //		user.setLangKey("en"); // hardcoded for now

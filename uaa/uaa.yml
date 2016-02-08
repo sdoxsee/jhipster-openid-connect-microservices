@@ -19,7 +19,7 @@ oauth:
     admin-portal:
       secret: secret
       authorized-grant-types: authorization_code
-      scope: openid,menu.read,menu.write,order.admin
+      scope: openid,foo.read,foo.write,foo.admin
       authorities: uaa.resource
       redirect-uri: http://localhost:8084/login
     mobile-app:
@@ -31,7 +31,7 @@ scim:
   users:
     - wtran|demo|wtran@pivotal.io|Will|Tran|menu.read,order.me
     - frank|demo|frank@whitehouse.gov|Frank|Underwood|menu.read,order.me
-    - freddy|demo|freddy@freddysbbq.com|Freddy|Hayes|menu.read,menu.write,order.admin
+    - freddy|demo|freddy@freddysbbq.com|Freddy|Hayes|foo.read,foo.write,foo.admin
 
 jwt:
   token:
@@ -73,4 +73,3 @@ jwt:
       QH+xY/4h8tgL+eASz5QWhj8DItm8wYGI5lKJr8f36jk0JLPUXODyDAeN6ekXY9LI
       fudkijw0dnh28LJqbkFF5wLNtATzyCfzjp+czrPMn9uqLNKt/iVD
       -----END RSA PRIVATE KEY-----
-    

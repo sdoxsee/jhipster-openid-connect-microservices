@@ -7,7 +7,7 @@ angular.module('fooApp')
                 parent: 'entity',
                 url: '/foos',
                 data: {
-                    authorities: ['ROLE_USER'],
+                    authorities: ['foo.admin'],
                     pageTitle: 'fooApp.foo.home.title'
                 },
                 views: {
@@ -28,7 +28,7 @@ angular.module('fooApp')
                 parent: 'entity',
                 url: '/foo/{id}',
                 data: {
-                    authorities: ['ROLE_USER'],
+                    authorities: ['foo.admin'],
                     pageTitle: 'fooApp.foo.detail.title'
                 },
                 views: {
@@ -51,7 +51,7 @@ angular.module('fooApp')
                 parent: 'foo',
                 url: '/new',
                 data: {
-                    authorities: ['ROLE_USER'],
+                    authorities: ['foo.admin'],
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                     $uibModal.open({
@@ -77,7 +77,7 @@ angular.module('fooApp')
                 parent: 'foo',
                 url: '/{id}/edit',
                 data: {
-                    authorities: ['ROLE_USER'],
+                    authorities: ['foo.admin'],
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                     $uibModal.open({
@@ -100,7 +100,7 @@ angular.module('fooApp')
                 parent: 'foo',
                 url: '/{id}/delete',
                 data: {
-                    authorities: ['ROLE_USER'],
+                    authorities: ['foo.admin'],
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                     $uibModal.open({
